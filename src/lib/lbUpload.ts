@@ -1,8 +1,7 @@
 import multer from "multer";
-import {dirname, join, extname} from "path";
-import { fileURLToPath } from "url";
+import {join, extname} from "path";
 
-const dirLocation = join(dirname(fileURLToPath(import.meta.url)), "../../public/uploads");
+const dirLocation = join(__dirname, "../../public/uploads");
 
 const uploadPDF = multer({
     storage: multer.diskStorage({
