@@ -132,3 +132,5 @@ dist
 # dist
 dist
 
+# prisma
+prisma/migrations
