@@ -13,3 +13,86 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model carnet {
+  Ncarnet Int @id
+  cedula Int
+  fecha_vencimiento DateTime
+  cargo String
+
+  usuario usuario @relation(fields: [cedula], references: [cedula])
+}
+
+model materia {
+  MatCodigo String @id
+  MatNombre String
+  MatCreditos Int
+  notas notas[]
+  inscripcion inscripcion[]
+}
+
+model permisos {
+  IdPermiso Int @id
+  matCreate Boolean
+  matDelete Boolean
+  matUpdate Boolean
+  UserCreate Boolean
+  UserDelete Boolean
+  UserUpdate Boolean
+  ponderCreate Boolean
+  ponderUpdate Boolean
+}
+
+model personalData {
+  cedula Int @id
+  nombre String
+  apellido String
+  fecha_nacimiento DateTime
+
+  usuario usuario @relation(fields: [cedula], references: [cedula])
+}
+
+model usuario {
+  cedula Int @id
+  correo String
+  contrasena String
+  datos_personales personalData[]
+  carnet carnet[]
+  proyectos proyectos[]
+  notas notas[]
+  inscripcion inscripcion[]
+}
+
+model notas {
+  Cedula Int 
+  MatCodigo String
+  Nota Float
+
+  usuario usuario @relation(fields: [Cedula], references: [cedula])
+  materia materia @relation(fields: [MatCodigo], references: [MatCodigo])
+
+  @@id([Cedula, MatCodigo])
+}
+
+model proyectos {
+  cedula Int
+  idProyecto Int
+  titulo String
+  descripcion String
+  fecha_upload DateTime
+  urlFile String
+
+  usuario usuario @relation(fields: [cedula], references: [cedula])
+
+  @@id([cedula, idProyecto])
+}
+
+model inscripcion {
+  cedula Int
+  MatCodigo String
+  fecha_inscripcion DateTime
+
+  usuario usuario @relation(fields: [cedula], references: [cedula])
+  materia materia @relation(fields: [MatCodigo], references: [MatCodigo])
+
+  @@id([cedula, MatCodigo])
+}
