@@ -11,3 +11,5 @@ app.get('/carnet/:cedula', async (req, res) => {
     const carnet = await getCarnet(cedula);
     res.json(carnet);
 });
+
+export default app;
