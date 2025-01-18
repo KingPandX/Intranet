@@ -6,8 +6,11 @@
     <title>Prueba</title>
 </head>
 <body>
-    <form action="/upload" method="post" enctype="multipart/form-data">
+    <form action="/projects/upload/" method="post" enctype="multipart/form-data">
         <input type="file" name="file">
+        <input type="text" name="description" placeholder="Descripción">
+        <input type="text" name="title" placeholder="Título">
+        <input type="text" name="ci" placeholder="CI">
         <input type="submit" value="Subir">
     </form>
 </body>

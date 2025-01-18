@@ -26,12 +26,27 @@ model materia {
   MatCodigo String @id
   MatNombre String
   MatCreditos Int
+  MatMaxEstudiantes Int
   notas notas[]
-  inscripcion inscripcion[]
+  userInscripcion userInscripcion[]
+}
+
+model usuario {
+  cedula Int @id
+  correo String @unique
+  contrasena String
+  nombre String
+  apellido String
+  fecha_nacimiento DateTime
+  carnet carnet[]
+  proyectos proyectos[]
+  notas notas[]
+  userInscripcion userInscripcion[]
+  permisos permisos @relation(fields: [cedula], references: [cedula])
 }
 
 model permisos {
-  IdPermiso Int @id
+  cedula Int @id
   matCreate Boolean
   matDelete Boolean
   matUpdate Boolean
@@ -40,32 +55,19 @@ model permisos {
   UserUpdate Boolean
   ponderCreate Boolean
   ponderUpdate Boolean
+
+  usuario usuario[]
 }
 
-model personalData {
-  cedula Int @id
-  nombre String
-  apellido String
-  fecha_nacimiento DateTime
-
-  usuario usuario @relation(fields: [cedula], references: [cedula])
-}
-
-model usuario {
-  cedula Int @id
-  correo String
-  contrasena String
-  datos_personales personalData[]
-  carnet carnet[]
-  proyectos proyectos[]
-  notas notas[]
-  inscripcion inscripcion[]
-}
 
 model notas {
   Cedula Int 
   MatCodigo String
-  Nota Float
+  NotaFinal Float
+  Nota1 Float
+  Nota2 Float
+  Nota3 Float
+  Nota4 Float
 
   usuario usuario @relation(fields: [Cedula], references: [cedula])
   materia materia @relation(fields: [MatCodigo], references: [MatCodigo])
@@ -74,22 +76,19 @@ model notas {
 }
 
 model proyectos {
+  idProyecto Int @id
   cedula Int
-  idProyecto Int
   titulo String
   descripcion String
   fecha_upload DateTime
   urlFile String
 
   usuario usuario @relation(fields: [cedula], references: [cedula])
-
-  @@id([cedula, idProyecto])
 }
 
-model inscripcion {
+model userInscripcion {
   cedula Int
   MatCodigo String
-  fecha_inscripcion DateTime
 
   usuario usuario @relation(fields: [cedula], references: [cedula])
   materia materia @relation(fields: [MatCodigo], references: [MatCodigo])

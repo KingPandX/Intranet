@@ -1,6 +1,6 @@
 import express from 'express';
 import bodyparser from 'body-parser';
-import { getCarnet } from 'src/controllers/carnet.controller';
+import { getCarnet } from '../controllers/carnet.controller';
 
 const app = express();
 app.use(bodyparser.json());
