@@ -1,97 +1,76 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
 model carnet {
-  Ncarnet Int @id
-  cedula Int
+  Ncarnet           String   @id
+  cedula            String
   fecha_vencimiento DateTime
-  cargo String
-
-  usuario usuario @relation(fields: [cedula], references: [cedula])
+  cargo             String
+  usuario           usuario  @relation(fields: [cedula], references: [cedula])
 }
 
 model materia {
-  MatCodigo String @id
-  MatNombre String
-  MatCreditos Int
+  MatCodigo         String  @id
+  MatNombre         String
+  MatCreditos       Int
   MatMaxEstudiantes Int
-  notas notas[]
-  userInscripcion userInscripcion[]
+  notas             notas[]
 }
 
 model usuario {
-  cedula Int @id
-  correo String @unique
-  contrasena String
-  nombre String
-  apellido String
+  cedula           String      @id
+  correo           String      @unique
+  password         String
+  nombre           String
+  apellido         String
   fecha_nacimiento DateTime
-  carnet carnet[]
-  proyectos proyectos[]
-  notas notas[]
-  userInscripcion userInscripcion[]
-  permisos permisos @relation(fields: [cedula], references: [cedula])
+  carnet           carnet[]
+  notas            notas[]
+  proyectos        proyectos[]
+  permisos         permisos    @relation(fields: [cedula], references: [cedula])
 }
 
 model permisos {
-  cedula Int @id
-  matCreate Boolean
-  matDelete Boolean
-  matUpdate Boolean
-  UserCreate Boolean
-  UserDelete Boolean
-  UserUpdate Boolean
+  cedula       String   @id
+  matCreate    Boolean
+  matDelete    Boolean
+  matUpdate    Boolean
+  UserCreate   Boolean
+  UserDelete   Boolean
+  UserUpdate   Boolean
   ponderCreate Boolean
   ponderUpdate Boolean
-
-  usuario usuario[]
+  usuario      usuario?
 }
 
-
 model notas {
-  Cedula Int 
+  Cedula    String
   MatCodigo String
   NotaFinal Float
-  Nota1 Float
-  Nota2 Float
-  Nota3 Float
-  Nota4 Float
-
-  usuario usuario @relation(fields: [Cedula], references: [cedula])
-  materia materia @relation(fields: [MatCodigo], references: [MatCodigo])
+  materia   materia @relation(fields: [MatCodigo], references: [MatCodigo])
+  usuario   usuario @relation(fields: [Cedula], references: [cedula])
 
   @@id([Cedula, MatCodigo])
 }
 
 model proyectos {
-  idProyecto Int @id
-  cedula Int
-  titulo String
-  descripcion String
+  idProyecto   Int      @id @default(autoincrement())
+  cedula       String
+  titulo       String
+  descripcion  String
   fecha_upload DateTime
-  urlFile String
-
-  usuario usuario @relation(fields: [cedula], references: [cedula])
+  urlFile      String
+  usuario      usuario  @relation(fields: [cedula], references: [cedula])
 }
 
-model userInscripcion {
-  cedula Int
-  MatCodigo String
-
-  usuario usuario @relation(fields: [cedula], references: [cedula])
-  materia materia @relation(fields: [MatCodigo], references: [MatCodigo])
-
-  @@id([cedula, MatCodigo])
+model tests {
+  idTest   String @id
+  password String
+  message  String
 }

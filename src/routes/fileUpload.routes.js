@@ -16,43 +16,57 @@ const express_1 = __importDefault(require("express"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const lbUpload_1 = __importDefault(require("../lib/lbUpload"));
 const PrismaInstance_1 = require("../PrismaInstance");
-const crypto_1 = require("crypto");
+const fs_1 = __importDefault(require("fs"));
 const app = (0, express_1.default)();
 app.use(express_1.default.static("public"));
 app.use(body_parser_1.default.urlencoded({ extended: true }));
 app.use(body_parser_1.default.json());
-app.post("projects/upload/", lbUpload_1.default.single("file"), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield PrismaInstance_1.prisma.usuario.findUnique({
-        where: { cedula: parseInt(req.body.ci) }
-    });
-    if (!user) {
-        res.status(404).send("User not found");
+app.use(express_1.default.static('public'));
+app.post('/upload', lbUpload_1.default.single('file'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { description, title, ci } = req.body;
+    console.log(req.body);
+    const file = req.file;
+    if (!file) {
+        res.status(400).send('No se ha subido ningun archivo');
         return;
     }
-    if (!req.file) {
-        res.status(400).send("File not found");
-        return;
-    }
-    yield PrismaInstance_1.prisma.proyectos.create({
-        data: {
-            descripcion: req.body.description,
-            fecha_upload: new Date(Date.now()).toISOString(),
-            idProyecto: (0, crypto_1.randomInt)(0, 1000000),
-            titulo: req.body.title,
-            urlFile: "projects/files/" + req.file.filename,
-            usuario: {
-                connect: {
-                    cedula: user.cedula
+    const path = file.path;
+    try {
+        const newFile = yield PrismaInstance_1.prisma.proyectos.create({
+            data: {
+                descripcion: description,
+                titulo: title,
+                fecha_upload: new Date(),
+                urlFile: path,
+                usuario: {
+                    connect: { cedula: ci }
                 }
             }
+        });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).send('Error al subir el archivo');
+        fs_1.default.rm(file.path, (err) => { console.log(err); });
+        return;
+    }
+    res.status(200).send('Archivo subido correctamente');
+}));
+app.get('/files', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const files = yield PrismaInstance_1.prisma.proyectos.findMany();
+    res.status(200).send(files);
+}));
+app.get('/files/dw/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = req.params.id;
+    const file = yield PrismaInstance_1.prisma.proyectos.findUnique({
+        where: {
+            idProyecto: parseInt(id)
         }
     });
-    res.send("File uploaded");
+    if (!file) {
+        res.status(404).send('Archivo no encontrado');
+        return;
+    }
+    res.download(file.urlFile);
 }));
-app.get("projects/files/:filename", (req, res) => {
-    console.log(req.params.filename);
-    const path = "uploads/" + req.params.filename;
-    res.sendFile(path, { root: "public" });
-});
-app.use(express_1.default.static('public'));
 exports.default = app;

@@ -19,8 +19,13 @@ const app = (0, express_1.default)();
 app.use(body_parser_1.default.json());
 app.use(body_parser_1.default.urlencoded({ extended: true }));
 app.get('/carnet/:cedula', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const cedula = parseInt(req.params.cedula);
+    const cedula = req.params.cedula;
     const carnet = yield (0, carnet_controller_1.getCarnet)(cedula);
-    res.json(carnet);
+    if (carnet) {
+        res.status(200).send({ carnet });
+        return;
+    }
+    res.status(404).send({ message: 'Carnet no encontrado' });
+    return;
 }));
 exports.default = app;
