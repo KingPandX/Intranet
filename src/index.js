@@ -18,7 +18,7 @@ app.use(notas_routes_1.default);
 const port = process.env.PORT || 3000;
 app.use(express_1.default.static('public'));
 app.get('/', (req, res) => {
-    res.sendFile('index.html', { root: __dirname });
+    res.send('Hello World');
 });
 app.listen(port, () => {
     console.log(`Server started at http://localhost:${port}`);
